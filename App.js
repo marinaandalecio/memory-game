@@ -6,25 +6,22 @@ import {
   StyleSheet,
   Image,
   Alert,
+  ScrollView,
 } from "react-native";
 import { shuffle } from "lodash";
 
 const images = [
   require("./assets/images/biblioteca-central-1.jpg"),
   require("./assets/images/eba.jpg"),
-  require("./assets/images/eci.jpg"),
   require("./assets/images/educacao-fisica.jpg"),
   require("./assets/images/engenharia.jpg"),
   require("./assets/images/face.jpg"),
   require("./assets/images/fafich.jpg"),
-  require("./assets/images/fale.jpg"),
   require("./assets/images/farmacia.jpg"),
   require("./assets/images/icb.jpg"),
   require("./assets/images/icex-1.jpg"),
-  require("./assets/images/medicina.jpg"),
   require("./assets/images/musica.jpg"),
   require("./assets/images/odontologia.jpg"),
-  require("./assets/images/praca-de-servico.jpg"),
   require("./assets/images/veterinaria-2.jpg"),
 ];
 
@@ -33,20 +30,22 @@ const App = () => {
   const [flippedIndices, setFlippedIndices] = useState([]);
   const [matchedPairs, setMatchedPairs] = useState(0);
 
-  useEffect(() => {
-    const initializeGame = () => {
-      const pairedImages = [...images, ...images];
-      const shuffledCards = shuffle(
-        pairedImages.map((img, index) => ({
-          img,
-          id: index,
-          flipped: false,
-          matched: false,
-        }))
-      );
-      setCards(shuffledCards);
-    };
+  const initializeGame = () => {
+    const pairedImages = [...images, ...images];
+    const shuffledCards = shuffle(
+      pairedImages.map((img, index) => ({
+        img,
+        id: index,
+        flipped: false,
+        matched: false,
+      }))
+    );
+    setCards(shuffledCards);
+    setFlippedIndices([]);
+    setMatchedPairs(0);
+  };
 
+  useEffect(() => {
     initializeGame();
   }, []);
 
@@ -108,35 +107,36 @@ const App = () => {
   );
 
   useEffect(() => {
-    if (matchedPairs == images.length) {
+    if (matchedPairs === images.length) {
       Alert.alert("Parabéns!", "Você ganhou o jogo!", [
         {
-          text: "Eu sou foda!",
-          style: "default",
-          onPress: () => console.log("Concordei que sou foda"),
-        },
-        {
-          text: "Obrigado! Iniciar novo jogo",
-          onPress: () => console.log("Iniciar novo jogo"),
+          text: "Obrigado(a)! Iniciar novo jogo",
+          onPress: initializeGame,
         },
       ]);
     }
   }, [matchedPairs]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.contentContainer}
+      style={styles.scrollView}
+    >
       <View style={styles.grid}>
         {cards.map((card, index) => renderCard(card, index))}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  },
+  contentContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   grid: {
     flexDirection: "row",
@@ -145,8 +145,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   card: {
-    width: 100,
-    height: 100,
+    width: 85,
+    height: 75,
     justifyContent: "center",
     alignItems: "center",
     margin: 5,
@@ -161,12 +161,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee",
   },
   cardImage: {
-    width: 90,
-    height: 90,
+    width: 80,
+    height: 75,
   },
   matchedCardImage: {
-    width: 90,
-    height: 90,
+    width: 80,
+    height: 70,
     opacity: 0.3,
   },
   cardText: {
